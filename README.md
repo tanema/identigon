@@ -5,6 +5,8 @@ This is the smallest identicon library that you have ever seen! Less than 50
 lines of code. Small enough that you can look at it and learn how to make one
 yourself!
 
+![examples](banner.png)
+
 ### Installation
 ```
 go get -u github.com/tanema/identigon
