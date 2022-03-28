@@ -37,7 +37,7 @@ There is a small cli to use with this. You can install it by running
 
 ### Micro blog
 
-The inspirations was [this post from github](https://github.blog/2013-08-14-identicons/#:~:text=Our%20Identicons%20are%20simple%205,huge%20number%20of%20unique%20Identicons.)
+The inspirations was [this post from github](https://github.blog/2013-08-14-identicons/)
 
 > At Github Our Identicons are simple 5×5 “pixel” sprites that are generated using
 > a hash of the user’s ID. The algorithm walks through the hash and turns pixels
