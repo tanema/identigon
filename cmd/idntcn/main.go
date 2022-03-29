@@ -3,7 +3,6 @@ package main
 import (
 	"bufio"
 	"bytes"
-	"errors"
 	"flag"
 	"fmt"
 	"image/png"
@@ -13,15 +12,30 @@ import (
 	"github.com/tanema/identigon"
 )
 
-func fatal(err error) {
+func fatal(err string) {
 	fmt.Fprintln(os.Stderr, err)
 	os.Exit(1)
 }
 
+func printUsage() {
+	fmt.Println(`idntcn - Fast idententicon generation.
+
+Usage:	idntcn [options] <string>
+
+Options:`)
+	flag.PrintDefaults()
+	fmt.Println(`
+Examples:
+  - idntcn "tim@chips.com" > ident.png
+  - idntcn -o ident.png "tim@chips.com"
+  - echo "tim@chips.com" | idntcon > ident.png`)
+}
+
 func main() {
-	size := flag.Int("size", 80, "size of output image")
-	pix := flag.Int("blocks", 8, "amount of pixel blocks in the image")
-	border := flag.Int("border", 0, "width of border.")
+	flag.Usage = printUsage
+	size := flag.Int("s", 80, "square size of the image in pixels")
+	pix := flag.Int("p", 8, "amount of pixel blocks in the image")
+	out := flag.String("o", "", "path to ouput file (defaults to stdout)")
 	flag.Parse()
 
 	var data string
@@ -34,16 +48,26 @@ func main() {
 			buf.Write(scanner.Bytes())
 		}
 		if err := scanner.Err(); err != nil {
-			fatal(err)
+			fatal(err.Error())
 		}
 		data = buf.String()
 	} else if len(os.Args) > 1 {
 		data = strings.Join(os.Args[1:], " ")
 	} else {
-		fatal(errors.New("no data provided"))
+		printUsage()
+		fatal("\n[Err] no data provided")
 	}
 
-	if err := png.Encode(os.Stdout, identigon.Generate(strings.TrimSuffix(data, "\n"), *size, *pix, *border)); err != nil {
-		fatal(err)
+	output := os.Stdout
+	if *out != "" {
+		var err error
+		output, err = os.Create(*out)
+		if err != nil {
+			fatal(err.Error())
+		}
+	}
+
+	if err := png.Encode(output, identigon.Generate(strings.TrimSuffix(data, "\n"), *size, *pix)); err != nil {
+		fatal(err.Error())
 	}
 }
